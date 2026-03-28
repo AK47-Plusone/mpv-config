@@ -465,7 +465,7 @@ local function spawn(time)
 
     local args = {
         mpv_path, "--no-config", "--msg-level=all=no", "--idle", "--ao=null", "--pause", "--keep-open=always", "--really-quiet", "--no-terminal",
-        "--load-scripts=no", "--osc=no", "--ytdl=no", "--load-stats-overlay=no",
+        "--load-scripts=no", "--osc=no", "--ytdl=no", "--load-stats-overlay=no", "--load-auto-profiles=no",
         "--load-auto-profiles=no", "--load-osd-console=no", "--load-select=no", "--autoload-files=no",
         "--edition="..(properties["edition"] or "auto"), "--vid="..(vid or "auto"), "--no-sub", "--no-audio",
         "--start="..time, allow_fast_seek and "--hr-seek=no" or "--hr-seek=yes",
@@ -478,6 +478,34 @@ local function spawn(time)
         "--video-rotate="..last_rotate,
         "--ovc=rawvideo", "--of=image2", "--ofopts=update=1", "--ocopy-metadata=no", "--o="..options.thumbnail
     }
+
+    if mp.get_property_native("load-console") ~= nil then
+        table.insert(args, "--load-console=no")
+    elseif mp.get_property_native("load-osd-console") ~= nil then
+        table.insert(args, "--load-osd-console=no")
+    end
+
+    if mp.get_property_native("load-select") ~= nil then
+        table.insert(args, "--load-select=no")
+    end
+
+    if mp.get_property_native("load-context-menu") ~= nil then
+        table.insert(args, "--load-context-menu=no")
+    end
+
+    if mp.get_property_native("load-positioning") ~= nil then
+        table.insert(args, "--load-positioning=no")
+    end
+
+    if mp.get_property_native("load-commands") ~= nil then
+        table.insert(args, "--load-commands=no")
+    end
+
+    if mp.get_property_native("clipboard-backends") ~= nil then
+        table.insert(args, "--clipboard-backends-clr")
+    elseif mp.get_property_native("clipboard-enable") ~= nil then
+        table.insert(args, "--clipboard-enable=no")
+    end
 
     if os_name == "darwin" and properties["macos-app-activation-policy"] then
         table.insert(args, "--macos-app-activation-policy=accessory")
